@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#111" />
+  <title>Eddie Eichhorn – AR</title>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.7/aframe/build/aframe-ar.min.js"></script>
+  <style>
+    *{box-sizing:border-box}body{margin:0;overflow:hidden;font-family:system-ui,-apple-system,sans-serif;background:#111}.ui{position:fixed;inset:0;z-index:5;pointer-events:none}.top{position:absolute;top:max(14px,env(safe-area-inset-top));left:14px;right:14px;display:flex;justify-content:space-between;align-items:center}.pill{pointer-events:auto;text-decoration:none;color:white;background:#0009;backdrop-filter:blur(12px);border:1px solid #fff3;border-radius:999px;padding:11px 15px;font-weight:700}.status{position:absolute;left:50%;bottom:max(26px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(92vw,520px);background:#182014e8;color:white;border:1px solid #ffffff2a;border-radius:18px;padding:14px 18px;text-align:center;box-shadow:0 12px 40px #0007}.status b{display:block;font-size:1rem}.status span{display:block;font-size:.86rem;opacity:.78;margin-top:4px}.found{background:#526a34e8}.help{position:absolute;right:14px;top:72px;pointer-events:auto;width:70px;border-radius:14px;overflow:hidden;border:2px solid #fff8;background:#fff}.help img{width:100%;display:block}.help small{display:block;color:#222;font-size:9px;text-align:center;padding:4px}.loading{position:absolute;inset:0;background:#1b2118;display:grid;place-items:center;color:white;z-index:20;transition:.35s}.loading.hide{opacity:0;pointer-events:none}
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">Kamera wird gestartet …</div>
+  <div class="ui">
+    <div class="top"><a class="pill" href="index.html">← Zurück</a><span class="pill">Eddie AR</span></div>
+    <div class="help"><img src="assets/eddie-marker.png" alt="Marker"><small>Marker</small></div>
+    <div class="status" id="status"><b>Marker suchen</b><span>Richte die Kamera auf den Eddie-Marker.</span></div>
+  </div>
+
+  <a-scene embedded vr-mode-ui="enabled: false" renderer="logarithmicDepthBuffer: true; antialias: true; colorManagement: true;" arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+    <a-assets><a-asset-item id="eddieModel" src="assets/eddie.glb"></a-asset-item></a-assets>
+    <a-marker id="eddieMarker" type="pattern" url="assets/pattern-eddie.patt" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
+      <a-entity gltf-model="#eddieModel" position="0 0 0" rotation="0 0 0" scale="0.75 0.75 0.75" animation="property: rotation; to: 0 360 0; loop: true; dur: 9000; easing: linear"></a-entity>
+      <a-entity light="type: ambient; intensity: 1.2"></a-entity>
+      <a-entity light="type: directional; intensity: .8" position="1 2 1"></a-entity>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    const marker=document.querySelector('#eddieMarker');
+    const status=document.querySelector('#status');
+    const loading=document.querySelector('#loading');
+    marker.addEventListener('markerFound',()=>{status.classList.add('found');status.innerHTML='<b>Eddie ist da! 🐿️</b><span>Bewege dich langsam um den Marker herum.</span>'});
+    marker.addEventListener('markerLost',()=>{status.classList.remove('found');status.innerHTML='<b>Marker suchen</b><span>Richte die Kamera auf den Eddie-Marker.</span>'});
+    window.addEventListener('load',()=>setTimeout(()=>loading.classList.add('hide'),1800));
+  </script>
+</body>
+</html>
